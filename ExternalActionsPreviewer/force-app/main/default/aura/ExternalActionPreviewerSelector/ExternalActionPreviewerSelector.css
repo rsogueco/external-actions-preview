@@ -1,0 +1,7 @@
+.THIS .slds-card__header.slds-grid   {
+    padding-left: 0;
+}
+.THIS .external-action-record .slds-card {
+    border: var(--lwc-borderWidthThin,1px) solid var(--slds-c-input-color-border, var(--sds-c-input-color-border, var(--lwc-colorBorderInput,rgb(201, 201, 201))));
+    padding-left: 15px;
+}
