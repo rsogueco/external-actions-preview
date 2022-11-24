@@ -1,0 +1,57 @@
+<template>
+    <div class="external-action-record slds-p-left_small slds-grid slds-size_1-of-1" style="position: relative;">
+        <lightning-card icon-name={recordIcon}
+            class="slds-border_bottom slds-border_top slds-border_left slds-border_right">
+            <h1 slot="title" class={recordTitleStyle}>{recordName}</h1>
+            <lightning-button if:true={record} slot="actions" label="Edit" onclick={handleEditButton}>
+            </lightning-button>
+            <table if:true={record} class="slds-table slds-table_cell-buffer slds-table_header-hidden"
+                aria-label="External Action Record">
+                <tbody>
+                    <tr class="slds-hint-parent">
+                        <th scope="row">
+                            <div class="slds-truncate" title="Action Name">Action Name</div>
+                        </th>
+                        <td data-label={record.ActionSelector}>
+                            <div class="slds-truncate" title={record.ActionName}>
+                                <lightning-formatted-url value={actionNameUrl} tooltip={record.ActionName}
+                                    target="_blank" label={record.ActionName}></lightning-formatted-url>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="slds-hint-parent">
+                        <th scope="row">
+                            <div class="slds-truncate" title="Marketing Extension">Marketing Extension</div>
+                        </th>
+                        <td data-label={record.ActionSelector}>
+                            <div class="slds-truncate" title={record.ActionSelector}>
+                                <lightning-formatted-url value={marketingAppExtensionUrl}
+                                    tooltip={record.MarketingAppExtension.MasterLabel} target="_blank"
+                                    label={record.MarketingAppExtension.MasterLabel}></lightning-formatted-url>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="slds-hint-parent">
+                        <th scope="row">
+                            <div class="slds-truncate" title="Action Selector">Action Selector</div>
+                        </th>
+                        <td data-label={record.ActionSelector}>
+                            <div class="slds-truncate" title={record.ActionSelector}>{record.ActionSelector}</div>
+                        </td>
+                    </tr>
+                    <tr class="slds-hint-parent">
+                        <th scope="row">
+                            <div class="slds-truncate" title="Is Active">Is Active</div>
+                        </th>
+                        <td data-label={record.IsActive}>
+                            <div class="slds-truncate" title={record.IsActive}>
+                                <lightning-icon icon-name={iconName} alternative-text={iconVariant}
+                                    variant={iconVariant} size="x-small"></lightning-icon>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </lightning-card>
+    </div>
+</template>
