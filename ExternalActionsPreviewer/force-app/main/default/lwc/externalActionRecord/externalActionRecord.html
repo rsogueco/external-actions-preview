@@ -1,9 +1,10 @@
 <template>
-    <div class="external-action-record slds-p-left_small slds-grid slds-size_1-of-1" style="position: relative;">
-        <lightning-card icon-name={recordIcon}
-            class="slds-border_bottom slds-border_top slds-border_left slds-border_right">
+    <div class="external-action-record slds-p-around_medium slds-p-top_none slds-grid slds-size_1-of-3"
+        style="position: relative;">
+        <lightning-card icon-name={recordIcon} class="slds-card_boundary">
             <h1 slot="title" class={recordTitleStyle}>{recordName}</h1>
-            <lightning-button if:true={record} slot="actions" label="Edit" onclick={handleEditButton}>
+            <lightning-button if:true={record} icon-name="utility:record_update" slot="actions" label="Edit"
+                onclick={handleEditButton}>
             </lightning-button>
             <table if:true={record} class="slds-table slds-table_cell-buffer slds-table_header-hidden"
                 aria-label="External Action Record">
@@ -33,7 +34,7 @@
                     </tr>
                     <tr class="slds-hint-parent">
                         <th scope="row">
-                            <div class="slds-truncate" title="Action Selector">Action Selector</div>
+                            <div class="slds-truncate" title="Action Selector">Invocable Action</div>
                         </th>
                         <td data-label={record.ActionSelector}>
                             <div class="slds-truncate" title={record.ActionSelector}>{record.ActionSelector}</div>
@@ -41,7 +42,7 @@
                     </tr>
                     <tr class="slds-hint-parent">
                         <th scope="row">
-                            <div class="slds-truncate" title="Is Active">Is Active</div>
+                            <div class="slds-truncate" title="Is Active">Active in Automations</div>
                         </th>
                         <td data-label={record.IsActive}>
                             <div class="slds-truncate" title={record.IsActive}>

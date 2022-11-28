@@ -7,7 +7,7 @@ import {
   MessageContext
 } from "lightning/messageService";
 import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
-import fetchExternalActionDetails from "@salesforce/apex/PreviewerEditorController.fetchExternalActionDetails";
+import fetchExternalActionDetails from "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails";
 
 export default class ExternalActionRecord extends NavigationMixin(
   LightningElement
