@@ -1,12 +1,6 @@
 public with sharing class PreviewerEditorController {
     public PreviewerEditorController() {}
 
-    @AuraEnabled(cacheable=true)
-    public static MarketingAppExtAction fetchExternalActionDetails(Id marketingAppExtActionId) {
-        MarketingAppExtAction maea = [SELECT Id, ActionName, ActionSelector, MarketingAppExtension.MasterLabel, ActionSchema, IsActive FROM MarketingAppExtAction WHERE Id = :marketingAppExtActionId WITH SECURITY_ENFORCED];
-        return maea;
-    }
-
     @AuraEnabled(cacheable=false)
     public static String saveExternalActionActionSchema(Id marketingAppExtActionId, String actionSchema) {
         HttpRequest req = new HttpRequest();

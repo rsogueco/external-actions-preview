@@ -2,7 +2,7 @@
 
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
 
-    <lightning:card variant="narrow" title="External Action" iconName="utility:preview" class="slds-p-around_medium">
+    <lightning:card variant="narrow" class="slds-p-around_medium">
         <div>
             <c:externalActionTester />
         </div>

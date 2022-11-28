@@ -30,9 +30,9 @@
         <name>region3</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>External Action Previewer</masterLabel>
+    <masterLabel>External Actions Previewer</masterLabel>
     <template>
-        <name>flexipage:appHomeTemplateHeaderTwoColumnsEqualWidth</name>
+        <name>flexipage:appHomeTemplateHeaderTwoColumns</name>
     </template>
     <type>AppPage</type>
 </FlexiPage>

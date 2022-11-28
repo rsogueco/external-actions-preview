@@ -1,6 +1,6 @@
 :host lightning-card {
   width: 100%;
-  padding-left: 15px;
+  padding-left: 1rem;
 }
 h1.muted {
   color: gray;

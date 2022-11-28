@@ -1,28 +1,14 @@
-<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global"
-    controller="PreviewerEditorController">
-    <aura:attribute name="recordChangeDatetime" type="DateTime" />
-    <aura:attribute name="record" type="Object" />
-    <aura:attribute name="recordError" type="String" />
-
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="PreviewerEditorController">
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
     <aura:handler event="aura:applicationEvent" action="{!c.handleRecordChange}" />
 
-    <force:recordData aura:id="recordHandler" recordId="{!v.recordId}" fields="ActionSchema" targetRecord="{!v.record}"
-        targetError="{!v.recordError}" mode="EDIT" recordUpdated="{!c.handleRecordUpdated}" />
+    <aura:attribute name="recordChangeDatetime" type="DateTime" />
 
-    <lightning:card variant="narrow" title="Editor" iconName="utility:edit" class="slds-p-around_medium">
-        <div>
-            <c:externalActionRecord />
-        </div>
+    <lightning:card variant="narrow" class="slds-p-around_medium">
         <div>
             <c:externalActionEditor recordChangeDatetime="{!v.recordChangeDatetime}"
                 onschemachange="{!c.handleSchemaSave}" />
         </div>
     </lightning:card>
 
-    <!-- Display Lightning Data Service errors, if any -->
-    <aura:if isTrue="{!not(empty(v.recordError))}">
-        <div class="recordError">
-            {!v.recordError}</div>
-    </aura:if>
 </aura:component>

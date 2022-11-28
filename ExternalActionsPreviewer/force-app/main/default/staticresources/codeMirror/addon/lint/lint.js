@@ -12,6 +12,7 @@
   "use strict";
   var GUTTER_ID = "CodeMirror-lint-markers";
   var LINT_LINE_ID = "CodeMirror-lint-line-";
+  var allTooltips = [];
 
   function showTooltip(cm, e, content) {
     var tt = document.createElement("div");
@@ -30,6 +31,9 @@
     CodeMirror.on(document, "mousemove", position);
     position(e);
     if (tt.style.opacity != null) tt.style.opacity = 1;
+    /* FIX: This seems to fix the tooltip from hiding in LWCs */
+    allTooltips.push(tt);
+    /* ENDFIX */
     return tt;
   }
   function rm(elt) {
@@ -41,6 +45,14 @@
     tt.style.opacity = 0;
     setTimeout(function() { rm(tt); }, 600);
   }
+  /* FIX: This seems to fix the tooltip from hiding in LWCs */
+  function hideAllTooltips() {
+    for (var i = 0; i < allTooltips.length; ++i) {
+      hideTooltip(allTooltips[0]);
+    }
+    allTooltips.length = 0;
+  }
+  /* ENDFIX */
 
   function showTooltipFor(cm, e, content, node) {
     var tooltip = showTooltip(cm, e, content);
@@ -54,6 +66,8 @@
         if (n == document.body) return;
         /* FIX: This seems to fix the tooltip from hiding in LWCs */
         if (!n) { /*hide();*/ break; }
+        if (allTooltips.length === 0) { hide(); break; }
+        /* ENDFIX */
       }
       if (!tooltip) return clearInterval(poll);
     }, 400);
@@ -99,6 +113,7 @@
     for (var i = 0; i < state.marked.length; ++i)
       state.marked[i].clear();
     state.marked.length = 0;
+    hideAllTooltips();
   }
 
   function clearErrorLines(cm) {

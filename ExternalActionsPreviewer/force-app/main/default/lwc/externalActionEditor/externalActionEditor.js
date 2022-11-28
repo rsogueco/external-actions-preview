@@ -8,8 +8,9 @@ import {
 } from "lightning/messageService";
 import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import fetchExternalActionDetails from "@salesforce/apex/PreviewerEditorController.fetchExternalActionDetails";
+import fetchExternalActionDetails from "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails";
 import saveExternalActionActionSchema from "@salesforce/apex/PreviewerEditorController.saveExternalActionActionSchema";
+import externalActionActionSchemaUpdate from "@salesforce/messageChannel/externalActionActionSchemaUpdate__c";
 import { loadScript, loadStyle } from "lightning/platformResourceLoader";
 import codeMirror from "@salesforce/resourceUrl/codeMirror";
 import { refreshApex } from "@salesforce/apex";
@@ -22,6 +23,9 @@ export default class ExternalActionEditor extends LightningElement {
   _externalActionActionSchema;
   _recordChangeDatetime;
   codemirrorIsClean = true;
+  DELAY = 500;
+  timer;
+  hasErrors;
 
   @api
   get recordChangeDatetime() {
@@ -38,14 +42,17 @@ export default class ExternalActionEditor extends LightningElement {
   set externalActionActionSchema(value) {
     this._externalActionActionSchema = value;
   }
-  get editorShouldShow() {
+  get showEditor() {
     return this._externalActionActionSchema &&
       this._externalActionActionSchema !== ""
-      ? "codemirror-container slds-m-left_small slds-m-top_xx-small slds-is-expanded slds-border_bottom slds-border_top slds-border_left slds-border_right"
-      : "codemirror-container slds-m-left_small slds-m-top_xx-small slds-is-collapsed";
+      ? "slds-is-expanded slds-card_boundary"
+      : "slds-is-collapsed";
   }
   get saveDisabled() {
-    return this.codemirrorIsClean;
+    return this.codemirrorIsClean || this.buttonsDisabled;
+  }
+  get buttonsDisabled() {
+    return this.hasErrors || !this.Id;
   }
 
   connectedCallback() {
@@ -84,7 +91,7 @@ export default class ExternalActionEditor extends LightningElement {
 
   initializeEditor() {
     const container = this.template.querySelector(".codemirror-container");
-    const editor = new window.CodeMirror(
+    const editor = new window.CodeMirror.fromTextArea(
       container,
       Object.assign(
         {
@@ -99,7 +106,8 @@ export default class ExternalActionEditor extends LightningElement {
           lineNumbers: true,
           lineWrapping: true,
           lint: {
-            highlightLines: true
+            highlightLines: true,
+            onUpdateLinting: this.afterLintChecks.apply(this)
           },
           matchBrackets: true,
           mode: "application/json",
@@ -110,13 +118,31 @@ export default class ExternalActionEditor extends LightningElement {
     );
 
     this.codemirror = editor;
-    this.codemirror.getDoc().on("change", () => {
-      this.codemirrorIsClean =
-        this.codemirror && this.codemirror.getDoc().isClean();
-    });
   }
 
-  renderedCallback() {}
+  afterLintChecks = () => {
+    return (_annotationsNotSorted, annotations) => {
+      if (this.codemirror && annotations.length === 0) {
+        this.hasErrors = false;
+        this.codemirrorIsClean = this.codemirror.getDoc().isClean();
+        this.publishExternalActionActionSchema({
+          actionSchema: this.codemirror.getDoc().getValue(),
+          actionSelector: this.wiredExternalAction.data.ActionSelector,
+          actionName: this.wiredExternalAction.data.ActionName
+        });
+      } else if (
+        this.codemirror &&
+        this.codemirror.getDoc().getValue() !== ""
+      ) {
+        this.codemirrorIsClean = true;
+        this.hasErrors = true;
+        this.publishExternalActionActionSchema({
+          actionName: this.wiredExternalAction.data.ActionName,
+          error: this.hasErrors
+        });
+      }
+    };
+  };
 
   @wire(MessageContext)
   messageContext;
@@ -158,13 +184,13 @@ export default class ExternalActionEditor extends LightningElement {
     } else {
       this.Id = undefined;
       this.externalActionActionSchema = "";
+      this.publishExternalActionActionSchema({});
     }
   }
 
   handleSaveButton() {
     this.codemirrorIsClean = true;
     let actionSchema = JSON.stringify(this.codemirror.getDoc().getValue());
-    console.log("========== actionSchema:", actionSchema);
     saveExternalActionActionSchema({
       marketingAppExtActionId: this.Id,
       actionSchema: actionSchema
@@ -220,9 +246,7 @@ export default class ExternalActionEditor extends LightningElement {
     this.unsubscribeToMessageChannel();
   }
 
-  publishExternalActionRecord = (record) => {
-    publish(this.messageContext, externalActionRecordSelected, {
-      record
-    });
+  publishExternalActionActionSchema = (message) => {
+    publish(this.messageContext, externalActionActionSchemaUpdate, message);
   };
 }
