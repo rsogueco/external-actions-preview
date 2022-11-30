@@ -10,7 +10,7 @@ import externalActionRecordSelected from "@salesforce/messageChannel/externalAct
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import fetchExternalActionDetails from "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails";
 import saveExternalActionActionSchema from "@salesforce/apex/PreviewerEditorController.saveExternalActionActionSchema";
-import externalActionActionSchemaUpdate from "@salesforce/messageChannel/externalActionActionSchemaUpdate__c";
+import externalActionActionSchemaUpdated from "@salesforce/messageChannel/externalActionActionSchemaUpdated__c";
 import { loadScript, loadStyle } from "lightning/platformResourceLoader";
 import codeMirror from "@salesforce/resourceUrl/codeMirror";
 import { refreshApex } from "@salesforce/apex";
@@ -247,6 +247,6 @@ export default class ExternalActionEditor extends LightningElement {
   }
 
   publishExternalActionActionSchema = (message) => {
-    publish(this.messageContext, externalActionActionSchemaUpdate, message);
+    publish(this.messageContext, externalActionActionSchemaUpdated, message);
   };
 }

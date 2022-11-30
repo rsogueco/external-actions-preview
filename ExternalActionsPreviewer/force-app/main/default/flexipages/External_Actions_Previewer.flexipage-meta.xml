@@ -7,17 +7,13 @@
                 <identifier>pi_ea_utils_ExternalActionPreviewerSelector</identifier>
             </componentInstance>
         </itemInstances>
-        <name>region1</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentName>ExternalActionPreviewerEditor</componentName>
                 <identifier>pi_ea_utils_ExternalActionPreviewerEditor</identifier>
             </componentInstance>
         </itemInstances>
-        <name>region2</name>
+        <name>left</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -27,12 +23,18 @@
                 <identifier>pi_ea_utils_ExternalActionPreviewerTester</identifier>
             </componentInstance>
         </itemInstances>
-        <name>region3</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>ExternalActionPreviewerLogger</componentName>
+                <identifier>pi_ea_utils_ExternalActionPreviewerLogger</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>right</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>External Actions Previewer</masterLabel>
     <template>
-        <name>flexipage:appHomeTemplateHeaderTwoColumns</name>
+        <name>ExternalActionPreviewerTemplate</name>
     </template>
     <type>AppPage</type>
 </FlexiPage>

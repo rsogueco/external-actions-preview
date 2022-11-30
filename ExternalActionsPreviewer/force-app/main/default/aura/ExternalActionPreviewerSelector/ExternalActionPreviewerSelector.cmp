@@ -5,10 +5,10 @@
 
     <lightning:card variant="narrow" title="External Action" iconName="utility:search" class="slds-p-around_medium">
         <div>
-            <c:externalActionSelector />
+            <pi_ea_utils:externalActionSelector />
         </div>
         <div>
-            <c:externalActionRecord />
+            <pi_ea_utils:externalActionRecord />
         </div>
     </lightning:card>
 </aura:component>

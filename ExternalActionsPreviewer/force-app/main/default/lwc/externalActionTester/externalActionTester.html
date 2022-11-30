@@ -1,9 +1,9 @@
 <template>
-  <lightning-card title="External Action" icon-name="utility:preview">
+  <lightning-card title="Preview" icon-name="utility:preview">
     <lightning-button icon-name="utility:share_file" slot="actions" label="Test" variant="brand"
       onclick={handleTestButton} disabled={showIllustrationImage}>
     </lightning-button>
-    <div class="slds-p-left_small slds-grid slds-size_1-of-1" style="position: relative">
+    <div class="slds-p-left_medium slds-grid slds-size_1-of-1" style="position: relative">
       <lightning-card class="external-action-tester-container slds-card_boundary slds-box slds-theme_shade">
         <section>
           <lightning-card
@@ -21,12 +21,12 @@
             </div>
             <div if:true={showIllustrationImage}
               class="external-action-tester-body slds-illustration slds-illustration_small">
-              <c-external-action-illustration if:true={actionSchemaEmpty} type="desert">
-              </c-external-action-illustration>
-              <c-external-action-illustration if:true={actionSchemaError} type="walkthroughNotAvailable">
-              </c-external-action-illustration>
-              <c-external-action-illustration if:true={actionSchemaViewInvalid} type="pageNotAvailable">
-              </c-external-action-illustration>
+              <pi_ea_utils-external-action-illustration if:true={actionSchemaEmpty} type="desert">
+              </pi_ea_utils-external-action-illustration>
+              <pi_ea_utils-external-action-illustration if:true={actionSchemaError} type="walkthroughNotAvailable">
+              </pi_ea_utils-external-action-illustration>
+              <pi_ea_utils-external-action-illustration if:true={actionSchemaViewInvalid} type="pageNotAvailable">
+              </pi_ea_utils-external-action-illustration>
               <div if:true={actionSchemaError} class="slds-text-longform">
                 <h3 class="slds-text-heading_medium">Error previewing!</h3>
                 <p class="slds-text-body_regular">Please check your Action Schema JSON</p>
