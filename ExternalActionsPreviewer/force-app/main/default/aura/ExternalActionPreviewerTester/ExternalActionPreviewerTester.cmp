@@ -4,7 +4,7 @@
 
     <lightning:card variant="narrow" class="slds-p-around_medium">
         <div>
-            <c:externalActionTester />
+            <pi_ea_utils:externalActionTester />
         </div>
     </lightning:card>
 </aura:component>

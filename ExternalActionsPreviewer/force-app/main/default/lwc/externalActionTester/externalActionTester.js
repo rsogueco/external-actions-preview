@@ -3,9 +3,11 @@ import {
   subscribe,
   unsubscribe,
   APPLICATION_SCOPE,
-  MessageContext
+  MessageContext,
+  publish
 } from "lightning/messageService";
-import externalActionActionSchemaUpdate from "@salesforce/messageChannel/externalActionActionSchemaUpdate__c";
+import externalActionActionSchemaUpdated from "@salesforce/messageChannel/externalActionActionSchemaUpdated__c";
+import externalActionTesterLogged from "@salesforce/messageChannel/externalActionTesterLogged__c";
 
 export default class ExternalActionTester extends LightningElement {
   actionSchema;
@@ -53,11 +55,16 @@ export default class ExternalActionTester extends LightningElement {
     if (!this.subscription) {
       this.subscription = subscribe(
         this.messageContext,
-        externalActionActionSchemaUpdate,
+        externalActionActionSchemaUpdated,
         (message) => this.handleMessage(message),
         { scope: APPLICATION_SCOPE }
       );
     }
+  }
+
+  unsubscribeToMessageChannel() {
+    unsubscribe(this.subscription);
+    this.subscription = null;
   }
 
   handleMessage(message) {
@@ -139,11 +146,6 @@ export default class ExternalActionTester extends LightningElement {
     return dst;
   }
 
-  unsubscribeToMessageChannel() {
-    unsubscribe(this.subscription);
-    this.subscription = null;
-  }
-
   handleTestButton() {
     const inputParams = [
       ...this.template.querySelectorAll("lightning-input")
@@ -157,6 +159,14 @@ export default class ExternalActionTester extends LightningElement {
       actionSelector: this.actionSelector,
       inputParams
     };
-    console.log("========== requestParams:", requestParams);
+    this.publishExternalActionLogMessage(
+      JSON.stringify(requestParams, null, 2)
+    );
   }
+
+  publishExternalActionLogMessage = (message) => {
+    publish(this.messageContext, externalActionTesterLogged, {
+      logMessage: message
+    });
+  };
 }

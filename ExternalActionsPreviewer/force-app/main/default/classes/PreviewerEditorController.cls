@@ -6,7 +6,7 @@ public with sharing class PreviewerEditorController {
         HttpRequest req = new HttpRequest();
         Http h = new Http();
         String baseUrl = 'callout:ExternalActionsPreviewerNC';
-        String endpoint = baseUrl + '/services/data/v56.0/tooling/sobjects/MarketingAppExtAction/' + marketingAppExtActionId;
+        String endpoint = baseUrl + '/tooling/sobjects/MarketingAppExtAction/' + marketingAppExtActionId;
         String body = '{"ActionSchema":' + actionSchema + '}';
         System.debug('========== body: ' + body);
 
