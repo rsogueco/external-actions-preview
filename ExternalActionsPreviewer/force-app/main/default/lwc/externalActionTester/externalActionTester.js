@@ -12,6 +12,7 @@ import externalActionTesterLogged from "@salesforce/messageChannel/externalActio
 export default class ExternalActionTester extends LightningElement {
   actionSchema;
   actionSelector;
+  actionParams;
   actionName;
   error;
   actionSchemaView = [];
@@ -71,6 +72,7 @@ export default class ExternalActionTester extends LightningElement {
     try {
       this.actionSchema = message.actionSchema;
       this.actionSelector = message.actionSelector;
+      this.actionParams = JSON.parse(message.actionParams);
       this.actionName = message.actionName;
       this.error = message.error;
       this.actionSchemaView = [];
@@ -157,6 +159,7 @@ export default class ExternalActionTester extends LightningElement {
     });
     const requestParams = {
       actionSelector: this.actionSelector,
+      actionParams: this.actionParams,
       inputParams
     };
     this.publishExternalActionLogMessage(

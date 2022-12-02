@@ -3,7 +3,7 @@ public class PreviewerSelectorController {
 
     @AuraEnabled(cacheable=true)
     public static MarketingAppExtAction fetchExternalActionDetails(Id marketingAppExtActionId) {
-        MarketingAppExtAction maea = [SELECT Id, ActionName, ActionSelector, MarketingAppExtension.MasterLabel, ActionSchema, IsActive FROM MarketingAppExtAction WHERE Id = :marketingAppExtActionId WITH SECURITY_ENFORCED];
+        MarketingAppExtAction maea = [SELECT Id, ActionName, ActionSelector, ActionParams, MarketingAppExtension.MasterLabel, ActionSchema, IsActive FROM MarketingAppExtAction WHERE Id = :marketingAppExtActionId WITH SECURITY_ENFORCED];
         return maea;
     }
 
