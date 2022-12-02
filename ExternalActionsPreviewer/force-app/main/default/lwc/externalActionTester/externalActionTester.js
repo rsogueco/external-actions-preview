@@ -8,6 +8,7 @@ import {
 } from "lightning/messageService";
 import externalActionActionSchemaUpdated from "@salesforce/messageChannel/externalActionActionSchemaUpdated__c";
 import externalActionTesterLogged from "@salesforce/messageChannel/externalActionTesterLogged__c";
+import invokeExternalAction from "@salesforce/apex/PreviewerTesterController.invokeExternalAction";
 
 export default class ExternalActionTester extends LightningElement {
   actionSchema;
@@ -70,11 +71,11 @@ export default class ExternalActionTester extends LightningElement {
 
   handleMessage(message) {
     try {
+      this.error = message.error;
       this.actionSchema = message.actionSchema;
       this.actionSelector = message.actionSelector;
       this.actionParams = JSON.parse(message.actionParams);
       this.actionName = message.actionName;
-      this.error = message.error;
       this.actionSchemaView = [];
 
       let actionSchemaParsed = JSON.parse(this.actionSchema),
@@ -162,9 +163,21 @@ export default class ExternalActionTester extends LightningElement {
       actionParams: this.actionParams,
       inputParams
     };
-    this.publishExternalActionLogMessage(
-      JSON.stringify(requestParams, null, 2)
-    );
+    let logMessage = "";
+    invokeExternalAction({
+        actionSelector: this.actionSelector,
+        actionParams: this.actionParams,
+        inputParams: inputParams
+      }).then(result => {
+        logMessage = result;
+      }).catch(e => {
+        logMessage = e.message;
+      }).finally(() => {
+        this.publishExternalActionLogMessage(logMessage);
+      });
+    // this.publishExternalActionLogMessage(
+    //   JSON.stringify(requestParams, null, 2)
+    // );
   }
 
   publishExternalActionLogMessage = (message) => {
