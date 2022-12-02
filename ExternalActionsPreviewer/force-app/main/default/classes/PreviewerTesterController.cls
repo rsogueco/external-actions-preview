@@ -4,13 +4,7 @@ public with sharing class PreviewerTesterController {
     @AuraEnabled(cacheable=false)
     public static String invokeExternalAction(String actionSelector, Map<String,String> actionParams, List<Map<String, String>> inputParams) {
         Invocable.Action action;
-        System.debug('Action Params: ' + actionParams);
-        System.debug('Input Params: ' + inputParams);
         if (actionParams.get('isStandard') == 'true') {
-            String actionType = actionParams.get('type');
-            if (actionType == 'submit') {
-                actionType = 'SUBMITAPPROVAL';
-            }
             action = Invocable.Action.createStandardAction(actionType);
         } else {
             action = Invocable.Action.createCustomAction(actionParams.get('type'), actionSelector);
@@ -25,7 +19,7 @@ public with sharing class PreviewerTesterController {
             if (results.size() > 0) {
                 if (results[0].isSuccess()) {
                     System.debug('Result is: ' + results[0].getOutputParameters().get('output'));
-                    //returnMessage = results[0].getOutputParameters().get('output');
+                    returnMessage = 'Success!';
                 } else {
                     System.debug('Result Errors are: ' + results[0].getErrors()[0].getMessage());
                     returnMessage = results[0].getErrors()[0].getMessage();
@@ -38,4 +32,3 @@ public with sharing class PreviewerTesterController {
         return returnMessage;
     }
 }
-//001Dn000003H4dqIAC
