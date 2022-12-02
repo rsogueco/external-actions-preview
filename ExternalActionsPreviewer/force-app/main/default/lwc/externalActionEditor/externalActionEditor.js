@@ -128,6 +128,7 @@ export default class ExternalActionEditor extends LightningElement {
         this.publishExternalActionActionSchema({
           actionSchema: this.codemirror.getDoc().getValue(),
           actionSelector: this.wiredExternalAction.data.ActionSelector,
+          actionParams: this.wiredExternalAction.data.ActionParams,
           actionName: this.wiredExternalAction.data.ActionName
         });
       } else if (

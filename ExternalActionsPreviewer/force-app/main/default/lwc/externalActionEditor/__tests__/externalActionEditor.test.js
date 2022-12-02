@@ -1,7 +1,25 @@
 import { createElement } from "lwc";
-import ExternalActionEditor from "pi_ea_utils/externalActionEditor";
+import ExternalActionEditor from "c/externalActionEditor";
+
+const windowSpy = jest.spyOn(global, "window", "get");
 
 describe("pi_ea_utils-external-action-editor", () => {
+  beforeAll(() => {
+    const mockedFromTextArea = jest.fn(() => ({
+      getDoc: jest.fn()
+    }));
+    const originalWindow = { ...window };
+
+    windowSpy.mockImplementation(() => ({
+      ...originalWindow,
+      CodeMirror: {
+        fromTextArea: mockedFromTextArea
+      }
+    }));
+  });
+  afterAll(() => {
+    windowSpy.mockRestore();
+  });
   afterEach(() => {
     // The jsdom instance is shared across test cases in a single file so reset the DOM
     while (document.body.firstChild) {
