@@ -5,7 +5,7 @@ public with sharing class PreviewerTesterController {
     public static String invokeExternalAction(String actionSelector, Map<String,String> actionParams, List<Map<String, String>> inputParams) {
         Invocable.Action action;
         if (actionParams.get('isStandard') == 'true') {
-            action = Invocable.Action.createStandardAction(actionType);
+            action = Invocable.Action.createStandardAction(actionParams.get('type'));
         } else {
             action = Invocable.Action.createCustomAction(actionParams.get('type'), actionSelector);
         }
