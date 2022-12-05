@@ -169,15 +169,8 @@ export default class ExternalActionTester extends LightningElement {
         actionParams: this.actionParams,
         inputParams: inputParams
       }).then(result => {
-        logMessage = result;
-      }).catch(e => {
-        logMessage = e.message;
-      }).finally(() => {
-        this.publishExternalActionLogMessage(logMessage);
+        this.publishExternalActionLogMessage(result);
       });
-    // this.publishExternalActionLogMessage(
-    //   JSON.stringify(requestParams, null, 2)
-    // );
   }
 
   publishExternalActionLogMessage = (message) => {
