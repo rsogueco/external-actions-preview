@@ -39,7 +39,7 @@ export default class ExternalActionLogger extends LightningElement {
 
   handleMessage(message) {
     console.log("========== message:", message);
-    this.logMessage +=
+    this.logMessage =
       new Date().toISOString() + " ==========\n" + message.logMessage + "\n";
   }
 }
