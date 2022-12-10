@@ -6,14 +6,15 @@ import {
   MessageContext,
   publish
 } from "lightning/messageService";
-import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { loadScript, loadStyle } from "lightning/platformResourceLoader";
+import { refreshApex } from "@salesforce/apex";
 import fetchExternalActionDetails from "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails";
 import saveExternalActionActionSchema from "@salesforce/apex/PreviewerEditorController.saveExternalActionActionSchema";
 import externalActionActionSchemaUpdated from "@salesforce/messageChannel/externalActionActionSchemaUpdated__c";
-import { loadScript, loadStyle } from "lightning/platformResourceLoader";
+import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
 import codeMirror from "@salesforce/resourceUrl/codeMirror";
-import { refreshApex } from "@salesforce/apex";
+import { initializeEditor } from "c/codeMirrorLib";
 
 export default class ExternalActionEditor extends LightningElement {
   Id;
@@ -74,7 +75,7 @@ export default class ExternalActionEditor extends LightningElement {
           loadStyle(this, codeMirror + "/lib/codemirror.css")
         ]).then(() => {
           this.subscribeToMessageChannel();
-          this.initializeEditor();
+          this.codemirror = initializeEditor(this);
         });
       })
       .catch((error) => {
@@ -88,62 +89,6 @@ export default class ExternalActionEditor extends LightningElement {
         console.log("========== connectedCallback error");
       });
   }
-
-  initializeEditor() {
-    const container = this.template.querySelector(".codemirror-container");
-    const editor = new window.CodeMirror.fromTextArea(
-      container,
-      Object.assign(
-        {
-          value: "",
-          autoCloseBrackets: true,
-          foldGutter: true,
-          gutters: [
-            "CodeMirror-linenumbers",
-            "CodeMirror-foldgutter",
-            "CodeMirror-lint-markers"
-          ],
-          lineNumbers: true,
-          lineWrapping: true,
-          lint: {
-            highlightLines: true,
-            onUpdateLinting: this.afterLintChecks.apply(this)
-          },
-          matchBrackets: true,
-          mode: "application/json",
-          styleActiveLine: true
-        },
-        this.options
-      )
-    );
-
-    this.codemirror = editor;
-  }
-
-  afterLintChecks = () => {
-    return (_annotationsNotSorted, annotations) => {
-      if (this.codemirror && annotations.length === 0) {
-        this.hasErrors = false;
-        this.codemirrorIsClean = this.codemirror.getDoc().isClean();
-        this.publishExternalActionActionSchema({
-          actionSchema: this.codemirror.getDoc().getValue(),
-          actionSelector: this.wiredExternalAction.data.ActionSelector,
-          actionParams: this.wiredExternalAction.data.ActionParams,
-          actionName: this.wiredExternalAction.data.ActionName
-        });
-      } else if (
-        this.codemirror &&
-        this.codemirror.getDoc().getValue() !== ""
-      ) {
-        this.codemirrorIsClean = true;
-        this.hasErrors = true;
-        this.publishExternalActionActionSchema({
-          actionName: this.wiredExternalAction.data.ActionName,
-          error: this.hasErrors
-        });
-      }
-    };
-  };
 
   @wire(MessageContext)
   messageContext;
@@ -161,6 +106,7 @@ export default class ExternalActionEditor extends LightningElement {
     } else {
       this.externalActionActionSchema = "";
     }
+
     if (this.codemirror) {
       this.codemirror.getDoc().setValue(this.externalActionActionSchema);
       this.codemirror.getDoc().markClean();
