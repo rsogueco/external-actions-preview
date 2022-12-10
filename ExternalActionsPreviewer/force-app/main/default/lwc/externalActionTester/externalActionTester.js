@@ -74,7 +74,6 @@ export default class ExternalActionTester extends LightningElement {
       this.error = message.error;
       this.actionSchema = message.actionSchema;
       this.actionSelector = message.actionSelector;
-      this.actionParams = JSON.parse(message.actionParams);
       this.actionName = message.actionName;
       this.actionSchemaView = [];
 
@@ -118,6 +117,7 @@ export default class ExternalActionTester extends LightningElement {
             return property.type !== undefined;
           });
       }
+      this.actionParams = JSON.parse(message.actionParams);
     } catch (e) {
       console.log("========== handleMessage error:", this.actionSchema);
     }
@@ -158,19 +158,18 @@ export default class ExternalActionTester extends LightningElement {
         value: input.value
       };
     });
-    const requestParams = {
+    invokeExternalAction({
       actionSelector: this.actionSelector,
       actionParams: this.actionParams,
-      inputParams
-    };
-    let logMessage = "";
-    invokeExternalAction({
-        actionSelector: this.actionSelector,
-        actionParams: this.actionParams,
-        inputParams: inputParams
-      }).then(result => {
-        this.publishExternalActionLogMessage(result);
-      });
+      inputParams: inputParams
+    }).then((result) => {
+      try {
+        const resultFormatted = JSON.stringify(JSON.parse(result), null, 2);
+        this.publishExternalActionLogMessage(resultFormatted);
+      } catch (e) {
+        this.publishExternalActionLogMessage(e.message);
+      }
+    });
   }
 
   publishExternalActionLogMessage = (message) => {
