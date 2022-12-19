@@ -86,7 +86,7 @@ export default class ExternalActionEditor extends LightningElement {
             variant: "error"
           })
         );
-        console.log("========== connectedCallback error");
+        console.error("========== connectedCallback error");
       });
   }
 
@@ -133,6 +133,7 @@ export default class ExternalActionEditor extends LightningElement {
       this.externalActionActionSchema = "";
       this.publishExternalActionActionSchema({});
     }
+    return this.Id;
   }
 
   handleSaveButton() {
@@ -152,7 +153,9 @@ export default class ExternalActionEditor extends LightningElement {
             })
           );
         } else {
+          console.log("========== data:", data);
           let result = JSON.parse(data);
+          console.log("========== result:", result);
           if (result && result.length) {
             throw new Error(result[0].message, {
               cause: result[0].errorCode
@@ -171,7 +174,7 @@ export default class ExternalActionEditor extends LightningElement {
             variant: "error"
           })
         );
-        console.log("========== handleSaveButton error: ", error);
+        console.error("========== handleSaveButton error");
         this.codemirrorIsClean = false;
       });
   }
