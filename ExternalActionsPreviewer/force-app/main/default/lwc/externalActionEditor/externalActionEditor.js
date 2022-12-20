@@ -153,9 +153,7 @@ export default class ExternalActionEditor extends LightningElement {
             })
           );
         } else {
-          console.log("========== data:", data);
           let result = JSON.parse(data);
-          console.log("========== result:", result);
           if (result && result.length) {
             throw new Error(result[0].message, {
               cause: result[0].errorCode
