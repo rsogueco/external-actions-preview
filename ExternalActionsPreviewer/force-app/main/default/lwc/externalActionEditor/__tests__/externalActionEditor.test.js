@@ -65,6 +65,8 @@ jest.mock(
 );
 
 describe("pi_ea_utils-external-action-editor", () => {
+  const flushPromises = () => new Promise(setImmediate);
+
   beforeAll(() => {
     const mockedFromTextArea = jest.fn((container) => ({
       getDoc: jest.fn(() => ({
@@ -96,8 +98,6 @@ describe("pi_ea_utils-external-action-editor", () => {
       document.body.removeChild(document.body.firstChild);
     }
   });
-
-  const flushPromises = () => new Promise(setImmediate);
 
   it("should render component", () => {
     // Arrange

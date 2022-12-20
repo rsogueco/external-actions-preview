@@ -43,6 +43,9 @@ export default class ExternalActionRecord extends NavigationMixin(
   get iconVariant() {
     return this.record.IsActive ? "success" : "default";
   }
+  get editButtonDisabled() {
+    return this.record ? false : true;
+  }
 
   @wire(MessageContext)
   messageContext;
@@ -84,6 +87,7 @@ export default class ExternalActionRecord extends NavigationMixin(
     if (!this.recordId) {
       this.record = undefined;
     }
+    return this.recordId;
   }
 
   unsubscribeToMessageChannel() {
