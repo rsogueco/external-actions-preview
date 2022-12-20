@@ -1,13 +1,27 @@
 import { createElement } from "lwc";
 import ExternalActionEditor from "c/externalActionEditor";
 import fetchExternalActionDetails from "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails";
-// import { subscribe, MessageContext, publish } from "lightning/messageService";
-// import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
+import saveExternalActionActionSchema from "@salesforce/apex/PreviewerEditorController.saveExternalActionActionSchema";
+import { publish, MessageContext } from "lightning/messageService";
+import externalActionRecordSelected from "@salesforce/messageChannel/externalActionRecordSelected__c";
+import { setImmediate } from "timers";
+import { refreshApex } from "@salesforce/apex";
+import { loadScript } from "lightning/platformResourceLoader";
 
 const windowSpy = jest.spyOn(global, "window", "get");
 const mockWiredExternalActions = require("./data/fetchExternalActionDetailsData.json");
 const mockActionSchema = require("./data/actionSchemaData.json");
+let mockScriptSuccess = true;
 
+jest.mock(
+  "@salesforce/apex",
+  () => {
+    return {
+      refreshApex: jest.fn(() => Promise.resolve())
+    };
+  },
+  { virtual: true }
+);
 jest.mock(
   "@salesforce/apex/PreviewerSelectorController.fetchExternalActionDetails",
   () => {
@@ -18,8 +32,41 @@ jest.mock(
   },
   { virtual: true }
 );
+jest.mock(
+  "@salesforce/apex/PreviewerEditorController.saveExternalActionActionSchema",
+  () => {
+    return {
+      default: jest.fn(() => Promise.resolve())
+    };
+  },
+  { virtual: true }
+);
+jest.mock(
+  "lightning/platformResourceLoader",
+  () => {
+    return {
+      loadScript() {
+        return new Promise((resolve, reject) => {
+          if (!mockScriptSuccess) {
+            reject("Could not load script");
+          } else {
+            resolve();
+          }
+        });
+      },
+      loadStyle() {
+        return new Promise((resolve) => {
+          resolve();
+        });
+      }
+    };
+  },
+  { virtual: true }
+);
 
 describe("pi_ea_utils-external-action-editor", () => {
+  const flushPromises = () => new Promise(setImmediate);
+
   beforeAll(() => {
     const mockedFromTextArea = jest.fn((container) => ({
       getDoc: jest.fn(() => ({
@@ -27,7 +74,6 @@ describe("pi_ea_utils-external-action-editor", () => {
         getValue: jest.fn(() => mockActionSchema),
         setValue: jest.fn((value) => {
           container.value = value;
-          console.log("========== textarea.value:", container.value);
           container.dispatchEvent(new CustomEvent("change"));
         })
       }))
@@ -53,10 +99,6 @@ describe("pi_ea_utils-external-action-editor", () => {
     }
   });
 
-  async function flushPromises() {
-    return Promise.resolve();
-  }
-
   it("should render component", () => {
     // Arrange
     const element = createElement("pi_ea_utils-external-action-editor", {
@@ -73,26 +115,32 @@ describe("pi_ea_utils-external-action-editor", () => {
     expect(textarea).not.toBeNull();
   });
 
-  // eslint-disable-next-line jest/no-commented-out-tests
-  /*
-  it("should handleMessage successfully", async () => {
+  it("should handleMessage successfully and unsuccessfully", async () => {
     // Arrange
     const element = createElement("pi_ea_utils-external-action-editor", {
       is: ExternalActionEditor
     });
+    document.body.appendChild(element);
+    await flushPromises();
 
     // Act
-    document.body.appendChild(element);
-    expect(subscribe).toHaveBeenCalled();
-    expect(subscribe.mock.calls[0][1]).toBe(externalActionRecordSelected);
-    publish(MessageContext, externalActionRecordSelected, { recordId: "001" });
-    await flushPromises();
-    console.log("==========", fetchExternalActionDetails.getLastConfig());
+    const successfulId = publish(MessageContext, externalActionRecordSelected, {
+      recordId: "002"
+    });
 
     // Assert
-    expect(fetchExternalActionDetails).toHaveBeenCalled();
+    expect(successfulId).toBe("002");
+
+    // Act
+    const unsuccessfulId = publish(
+      MessageContext,
+      externalActionRecordSelected,
+      undefined
+    );
+
+    // Assert
+    expect(unsuccessfulId).toBe(undefined);
   });
-  */
 
   it("should fetchExternalActionDetails successfully", async () => {
     // Arrange
@@ -120,5 +168,54 @@ describe("pi_ea_utils-external-action-editor", () => {
     expect(
       element.shadowRoot.querySelector("section.slds-is-expanded")
     ).not.toBeNull();
+  });
+
+  it("should recordChangeDatetime successfully", async () => {
+    // Arrange
+    const element = createElement("pi_ea_utils-external-action-editor", {
+      is: ExternalActionEditor
+    });
+    const currDatetime = Date.now();
+
+    // Act
+    document.body.appendChild(element);
+    await flushPromises();
+    element.recordChangeDatetime = currDatetime;
+
+    // Assert
+    expect(element.recordChangeDatetime).toBe(currDatetime);
+    expect(refreshApex).toBeCalled();
+  });
+
+  it("should handleSaveButton successfully", async () => {
+    // Arrange
+    const element = createElement("pi_ea_utils-external-action-editor", {
+      is: ExternalActionEditor
+    });
+
+    // Act
+    document.body.appendChild(element);
+    await flushPromises();
+    const saveButton = element.shadowRoot.querySelector(
+      'lightning-button[title="Save"]'
+    );
+    saveButton.click();
+
+    // Assert
+    expect(saveExternalActionActionSchema).toBeCalled();
+  });
+
+  it("should loadScript unsuccessfully", async () => {
+    // Arrange
+    mockScriptSuccess = false;
+    const element = createElement("pi_ea_utils-external-action-editor", {
+      is: ExternalActionEditor
+    });
+
+    // Act
+    document.body.appendChild(element);
+
+    // Assert
+    await expect(loadScript).rejects.toBe("Could not load script");
   });
 });

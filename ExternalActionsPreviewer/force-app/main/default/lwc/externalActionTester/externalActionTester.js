@@ -119,7 +119,7 @@ export default class ExternalActionTester extends LightningElement {
       }
       this.actionParams = JSON.parse(message.actionParams);
     } catch (e) {
-      console.log("========== handleMessage error:", this.actionSchema);
+      console.error("========== handleMessage error:", this.actionSchema);
     }
   }
 
